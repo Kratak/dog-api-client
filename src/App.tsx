@@ -10,13 +10,17 @@ interface BreedDataItem {
 const Dogs = () => {
     const [listOfBreeds, setListOfBreeds] = useState<Array<BreedDataItem>>([]);
     const [selectedBreed, setSelectedBreed] = useState('');
-    const [selectedBreedData, setSelectedBreedData] = useState('');
+    const [randomImageNumber, setRandomImageNumber] = useState<null | number>(null);
+    const [selectedBreedData, setSelectedBreedData] = useState<Array<string>>([]);
 
     const handleSelectBreed = (name: string) => () => setSelectedBreed(name);
     const handleCloseModal = () => {
         setSelectedBreed('');
-        setSelectedBreedData('');
+        setRandomImageNumber(null);
+        setSelectedBreedData([]);
     };
+    const handleSetRandomImageNumber = () => setRandomImageNumber(Math.floor(Math.random() * selectedBreedData.length));
+
 
     useEffect(() => {
         fetch('https://dog.ceo/api/breeds/list/all')
@@ -36,7 +40,8 @@ const Dogs = () => {
             fetch(`https://dog.ceo/api/breed/${selectedBreed}/images`)
                 .then(response => response.json())
                 .then(({message}) => {
-                    setSelectedBreedData(message[Math.floor(Math.random() * message.length)] as string)
+                    setRandomImageNumber(Math.floor(Math.random() * message.length));
+                    setSelectedBreedData(message)
                 })
                 .catch(error => console.log(error));
         }
@@ -48,7 +53,10 @@ const Dogs = () => {
                 <Typography variant={'h5'}>
                     {selectedBreed}
                 </Typography>
-                <img src={selectedBreedData} alt="selectedBreed"/>
+                {!!selectedBreedData && randomImageNumber !== null ?
+                    <img src={selectedBreedData[randomImageNumber]} alt="selectedBreed"/> :
+                    <span>loading image...</span>}
+                <div><Button onClick={handleSetRandomImageNumber}>Another image</Button></div>
                 <div><Button onClick={handleCloseModal}>close</Button></div>
             </div>
         </Modal>
@@ -58,7 +66,8 @@ const Dogs = () => {
         <Typography variant={'h5'}>
             Press any for details
         </Typography>
-        <div>{listOfBreeds.map(item => <Button onClick={handleSelectBreed(item.name)}>{item.name}</Button>)}</div>
+        <div>{listOfBreeds.map(item => <Button key={item.name}
+                                               onClick={handleSelectBreed(item.name)}>{item.name}</Button>)}</div>
     </div>)
 }
 
