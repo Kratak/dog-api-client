@@ -13,15 +13,15 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.Modal-body {
   display: flex;
+  background: white;
+  justify-content: center;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin: 50px 200px;
+  padding: 50px;
+
 }
 
 .App-link {
